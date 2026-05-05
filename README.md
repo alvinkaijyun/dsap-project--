@@ -1,10 +1,5 @@
 # DreamCore 記憶系統：以每日回憶、夢境與遺忘為核心的多層記憶模擬
 
-## 專題名稱
-DreamCore Memory System: A Daily Simulation of Recall, Dreaming, and Forgetting
-
----
-
 ## 動機與目標
 人類記憶並非靜態儲存，而是一個動態、選擇性且具有層次的系統。記憶會隨時間衰退，透過主動回憶而被強化，並在睡眠中經歷重組與鞏固。此外，部分記憶可能被壓抑而不易被意識提取，但仍可能在夢境或內在意識中浮現。
 
