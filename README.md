@@ -1,187 +1,405 @@
 # DreamCore 記憶系統：以每日回憶、夢境與遺忘為核心的多層記憶模擬
 
-## 動機與目標
-人類記憶並非靜態儲存，而是一個動態、選擇性且具有層次的系統。記憶會隨時間衰退，透過主動回憶而被強化，並在睡眠中經歷重組與鞏固。此外，部分記憶可能被壓抑而不易被意識提取，但仍可能在夢境或內在意識中浮現。
+## 專案簡介
 
-本專題結合記憶的心理學概念（如記憶衰退、鞏固、壓抑與分層結構）與 dreamcore 風格中模糊、片段與非線性的特性，設計一個以「每日」為單位運作的記憶模擬系統。
+DreamCore 是一個結合認知心理學（Cognitive Psychology）與 Dreamcore 美學概念的記憶模擬系統。
 
----
+不同於一般筆記軟體將資訊視為靜態資料，本系統將「記憶」視為會隨時間變化的動態物件。記憶可能因主動回憶而被強化，也可能因時間流逝而逐漸淡化；部分記憶甚至會被壓抑，但仍可能透過夢境或潛意識重新浮現。
 
-## 🚧 Prototype 現況（重要）
-目前系統已完成核心「每日記憶模擬流程」的基本版本，包含：
-
-### ✅ 已實作功能
-- 新增記憶（設定 importance）
-- 記憶強度（strength）與衰減（decay_rate）
-- 每日時間推進（Next Day / Sleep）
-- 記憶瀏覽（Memory Browser）
-  - Recommended List
-  - View（All / Layer / State）
-  - Search
-- 單筆記憶操作
-  - Review（強化記憶）
-  - Suppress（壓抑記憶，採用等級制）
-- 記憶狀態轉換（Active / Suppressed / Faded）
-- 記憶層級（Working / Long-term / Deep）
+本專題透過資料結構與演算法，模擬記憶在形成、遺忘、鞏固與重現過程中的變化。
 
 ---
 
-### 🔄 部分實作 / 簡化版本
-- Dream Recall（已具基本隨機抽取概念）
-- Inner Voice（以機率選取部分記憶）
-- Suppression（由原本 boolean 改為等級系統）
+# 專案目標
+
+本系統希望模擬下列記憶現象：
+
+* 記憶衰退（Forgetting）
+* 主動回憶（Active Recall）
+* 記憶鞏固（Consolidation）
+* 記憶壓抑（Suppression）
+* 夢境回憶（Dream Recall）
+* 潛意識浮現（Inner Voice）
+* 多層記憶結構（Memory Layers）
 
 ---
 
-### ⏳ 尚未完整實作（保留於設計）
-- 完整 dream bias 模型
-- 複雜權重推薦（heap / priority queue）
-- 記憶干擾模型（大量新增記憶時）
-- 高階心理模型（完整 unconscious interaction）
+# 已完成功能
+
+## 1. 記憶新增系統
+
+### 預設記憶清單（Preset Memory Library）
+
+系統內建常見的大學生生活事件，使用者可直接選擇：
+
+* Going to class
+* Studied for an exam
+* Worked on a group project
+* Performed on stage
+* Went to the library
+* Had a meal with friends
+* Practiced for activity
+* Met a new friend
+* Achieved a personal goal
+* Spent time alone
+* Missed a deadline
+* Stayed up late
+* Felt stressed
+* Talked with friends
+* Talked with family
+* Talked with someone I like
+* Exercise
+* Prepared for a presentation
+* Had a meaningful conversation
+* Felt lonely or disconnected
+* Completed an assignment
+* Skipped a class
+* Listened to music
+* Played a video game
+* Remembered a childhood memory
+* Thought about the future
+
+使用者不需要每次重新輸入記憶內容，即可快速建立每日記憶。
 
 ---
 
-## 競品比較（保留原設計）
+### 自訂記憶（Custom Memory）
 
-### 1. 一般筆記工具
-偏靜態儲存，不具備記憶動態模擬
+若預設清單中沒有符合的內容，使用者也可以自行輸入記憶名稱。
 
-### 2. Anki
-偏重學習效率，不模擬壓抑、夢境或深層記憶
+建立記憶時需設定：
 
-### 3. Todo List
-僅做提醒，不涉及記憶心理機制
+- Importance（重要性）
 
-### DreamCore 差異
-- 記憶層級（Working / Long-term / Deep）
-- 記憶狀態（Active / Suppressed / Faded）
-- 主動 vs 被動回憶
-- Dream / Inner Voice 模擬
-- 模糊記憶輸出
+系統會自動記錄記憶建立當天的日期（Day Created）。
 
 ---
 
-## 系統架構（對應目前程式）
+## 2. 記憶瀏覽系統（Memory Browser）
 
-### 記憶層級（Layer）
-- Working：初始記憶
-- Long-term：經過回憶鞏固
-- Deep：高重要性且穩定
+Memory Browser 提供三種瀏覽方式：
 
----
+### Recommended List
 
-### 記憶狀態（State）
-- Active：可直接被存取
-- Suppressed：被壓抑（以等級表示）
-- Faded：強度過低
+系統根據記憶的重要性與遺忘風險推薦需要回顧的記憶。
 
 ---
 
-### 記憶屬性
-- name
-- day_created
-- strength
-- decay_rate
-- importance
-- review_count
-- suppression_level（新增）
-- layer / state
+### View
+
+可依照不同分類方式瀏覽：
+
+#### View All
+
+顯示所有記憶
+
+#### View by Layer
+
+依照記憶層級顯示
+
+#### View by State
+
+依照記憶狀態顯示
 
 ---
 
-## 🧠 每日運作流程（對應目前程式）
+### Search
 
-### 使用者操作流程
+透過關鍵字搜尋特定記憶。
+
+---
+
+## 3. 單筆記憶操作
+
+使用者可選擇特定記憶進行互動。
+
+### Review（回憶）
+
+模擬主動回憶。
+
+效果：
+
+* 提升 Strength
+* 降低 Decay Rate
+* 增加 Review Count
+* 幫助記憶進入更高層級
+* 逐步解除壓抑
+
+Decay Rate 的改善採遞減設計：
+
+* 第一次 Review：-2
+* 第二次 Review：-1
+* 後續逐漸減半
+
+此設計參考心理學中的 Retrieval Practice 理論。
+
+---
+
+### Suppress（壓抑）
+
+本系統採用 Suppression Level 設計。
+
+不同於單純的 Yes / No 狀態，每次壓抑都會提高：
+
+* Suppression Level
+
+Suppression Level 越高：
+
+* 越不容易被一般方式存取
+* 但越容易透過夢境或潛意識重新浮現
+
+此設計參考心理學中的 Thought Suppression 現象。
+
+---
+
+# 記憶層級（Memory Layer）
+
+## Working Memory
+
+新建立的記憶。
+
+特性：
+
+* 穩定度低
+* 容易遺忘
+* 衰退速度較快
+
+---
+
+## Long-Term Memory
+
+經過多次回憶後形成。
+
+特性：
+
+* 較穩定
+* 較不容易遺忘
+
+---
+
+## Deep Memory
+
+高重要性且經過充分鞏固的記憶。
+
+特性：
+
+* 穩定度最高
+* 不容易消失
+* 更容易影響夢境與潛意識
+
+---
+
+# 記憶狀態（Memory State）
+
+## Active
+
+正常可被提取的記憶。
+
+---
+
+## Suppressed
+
+被壓抑的記憶。
+
+以 Suppression Level 表示壓抑程度。
+
+---
+
+## Faded
+
+記憶強度過低。
+
+此類記憶會以模糊方式顯示。
+
+---
+
+# 睡眠系統（Sleep Phase）
+
+當使用者選擇 Sleep 時：
+
+## 記憶衰退
+
+所有記憶根據 Decay Rate 降低 Strength。
+
+---
+
+## 狀態更新
+
+當 Strength 低於門檻：
+
+* Active → Faded
+
+---
+
+## 記憶鞏固（Consolidation）
+
+透過 Review Count：
+
+* Working → Long-Term
+* Long-Term → Deep
+
+---
+
+## Dream Recall
+
+系統會從記憶庫中抽取部分記憶進入夢境。
+
+目前版本已實作：
+
+* 基本隨機抽取
+* Layer 影響
+* Suppression 影響
+
+未來可加入更完整的 Dream Bias 模型。
+
+---
+
+## Inner Voice
+
+從以下記憶中抽取：
+
+* Deep Memory
+* Suppressed Memory
+* Faded Memory
+
+抽中機率與 Importance 相關：
+
+```text
+Weight = Importance / 10
+```
+
+模擬潛意識中的記憶浮現。
+
+---
+
+# 模糊記憶（Blurred Memory）
+
+當記憶進入 Faded 狀態：
+
+* 偶數位置字元隱藏
+* 最後一個字元保留
+
+例如：
+
+```text
+Original:
+Remembered a childhood memory
+
+Blurred:
+R*m*m*b*r*d * c*i*d*o*d *e*o*y
+```
+
+模擬記憶片段化與不完整回憶。
+
+---
+
+# 統計資訊（Statistics Dashboard）
+
+系統提供統計頁面顯示：
+
+* 記憶總數
+* Layer 分布
+* State 分布
+* Suppression Level 分布
+
+方便觀察記憶系統的變化。
+
+---
+
+# 系統架構
+
+```text
 Main Menu
 │
 ├── Add Memory
-├── Memory Browser
-│ ├── Recommended List
-│ ├── View
-│ │ ├── All
-│ │ ├── By Layer
-│ │ └── By State
-│ └── Search
+│   ├── Preset Memory
+│   └── Custom Memory
 │
-└── Sleep (進入下一天)
+├── Memory Browser
+│   ├── Recommended List
+│   ├── View
+│   │   ├── View All
+│   │   ├── View by Layer
+│   │   └── View by State
+│   │
+│   └── Search
+│
+├── Statistics
+│
+└── Sleep
+```
 
 ---
 
-### 每日變化（Sleep）
-- 所有記憶 strength 減少
-- 低於 threshold → 進入 faded
-- suppression 記憶有機率浮現
-- 進行簡化 dream recall
+# 使用到的資料結構與演算法
+
+## Data Structures
+
+* Array
+* Class
+* Multi-file Architecture (.h / .cpp)
 
 ---
 
-## 回憶機制（目前版本）
+## Algorithms
 
-### Review
-- 增加 strength
-- 降低 decay_rate（逐次遞減）
-- 增加 review_count
-- 可解除 suppressed
-
----
-
-### Suppress（新版）
-- 不再是 yes/no
-- 改為 suppression_level（累積）
-- 等級越高：
-  - 越難被選到
-  - 但 inner voice / dream 機率上升
+* Sorting
+* Searching
+* Filtering
+* Probability-based Selection
+* State Transition Logic
 
 ---
 
-## 模糊記憶（Blurred Memory）
-當記憶為 faded：
-- 字串部分隱藏（但保留最後字母）
-- 模擬記憶片段化
+# 未來改進方向
+
+## 演算法優化
+
+* Priority Queue 推薦系統
+* Dream Bias 權重模型
+* 記憶干擾模型
+* 情緒權重系統
 
 ---
 
-## 使用技術
+## 產品化方向
 
-- C++
-- 分檔架構（.h / .cpp）
-- Dynamic Array
-- Sorting / Filtering
-- 基本機率模型
-
----
-
-## 未來改進方向（非常重要）
-
-### 🔥 系統升級
-- Priority Queue（推薦清單）
-- 更真實 dream bias
-- Emotional weighting
-- Memory interference
+* GUI 圖形介面
+* Web Application
+* 記憶卡片式介面
+* Dreamcore 視覺化夢境系統
+* 記憶關聯網路
 
 ---
 
-### 🌐 產品化方向
-- Web UI（記憶卡片）
-- 點擊記憶 → review / suppress
-- Dream 視覺化（dreamcore風格）
-
----
-
-## 預期成果
-本系統展示如何用資料結構與演算法模擬人類記憶的：
-
-- 遺忘
-- 壓抑
-- 強化
-- 潛意識浮現
-
-並透過 DreamCore 風格呈現記憶的不完整性與非線性。
-
----
-
-## 如何執行
+# 編譯方式
 
 ```bash
 g++ main.cpp Memory.cpp MemorySystem.cpp -o main
 ./main
+```
+
+---
+
+# Release
+
+目前版本：
+
+**DreamCore Prototype v1.3.1 – Demo & Usability Update**
+
+新增內容：
+
+* Preset Memory Library
+* Statistics Dashboard
+* 改良 Memory Browser 架構
+* 改良 CLI Dashboard
+* 強化 Demo 體驗
+* 更新 README 文件
+
+---
+
+# 結論
+
+DreamCore 透過資料結構與演算法模擬記憶的形成、遺忘、壓抑與重現過程。
+
+本專題展示了如何將心理學中的記憶概念轉化為可執行的系統模型，並透過多層記憶結構、壓抑機制、夢境回憶與潛意識浮現等設計，呈現記憶在時間中的動態變化。
