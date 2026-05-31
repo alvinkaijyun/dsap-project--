@@ -20,6 +20,10 @@ public:
     int countMemoriesAddedToday();
 
     void addMemory();
+    void addMemoryFromPreset();
+    void addCustomMemory();
+    void loadSampleData();
+    void showStatistics();
 
     void memoryBrowser();
     void recommendedListMenu();
